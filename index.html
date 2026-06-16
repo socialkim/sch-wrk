@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>순천향대학교 교직원 AI 실습 가이드 · 팩트챗</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+<style>
+:root{
+  --navy:#0E2A47;--navy-2:#13355A;--navy-light:#E7EEF6;--navy-mid:#3D6695;
+  --gold:#C9A227;--gold-light:#FBF3DA;--gold-deep:#8A6D12;
+  --warm-white:#F8F7F4;--cream:#F1EFEA;
+  --coral:#D4654A;--coral-light:#FDEEE9;
+  --teal:#1A8A7D;--teal-light:#E6F5F3;
+  --green:#2D8A4E;--green-light:#E8F5ED;
+  --purple:#6B4FA0;--purple-light:#F0EBF8;
+  --amber:#D4A03C;--amber-light:#FBF3E0;
+  --red:#C0392B;--red-light:#FDECEA;
+  --dark-text:#15212E;--body-text:#37434F;--muted:#6B7682;
+  --border:#E0DDD6;--white:#fff;--card-bg:#FAFAF8;
+  --radius:14px;--radius-sm:8px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --font:'Pretendard Variable',-apple-system,system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--warm-white);color:var(--dark-text);line-height:1.65;-webkit-font-smoothing:antialiased}
+
+.hero{background:linear-gradient(135deg,var(--navy) 0%,#0B2138 55%,#143A60 100%);padding:46px 24px 38px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60px;right:-50px;width:240px;height:240px;background:var(--gold);opacity:.14;border-radius:50%}
+.hero::after{content:'';position:absolute;bottom:-90px;left:18%;width:320px;height:320px;background:var(--navy-mid);opacity:.18;border-radius:50%}
+.hero-inner{position:relative;z-index:1;max-width:980px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(8px);border-radius:999px;padding:6px 18px;font-size:13px;color:var(--gold);font-weight:600;letter-spacing:.3px;margin-bottom:16px}
+.hero h1{font-size:clamp(25px,5vw,37px);font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-.02em}
+.hero .subtitle{font-size:clamp(14px,2.5vw,18px);color:rgba(255,255,255,.72);font-weight:500}
+.hero .tool-note{margin-top:14px;font-size:12.5px;color:rgba(255,255,255,.6)}
+.hero .tool-note b{color:var(--gold)}
+
+.mode-bar{background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200}
+.mode-inner{max-width:980px;margin:0 auto;display:flex;align-items:center;gap:0}
+.mode-toggle{display:flex;background:var(--cream);border-radius:10px;padding:3px;margin:8px 16px}
+.mode-btn{padding:8px 18px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s;background:transparent;color:var(--muted)}
+.mode-btn.active{background:var(--navy);color:#fff;box-shadow:0 2px 6px rgba(14,42,71,.25)}
+.nav{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav::-webkit-scrollbar{display:none}
+.nav-btn{flex-shrink:0;padding:14px 16px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;font-family:var(--font);white-space:nowrap}
+.nav-btn:hover{color:var(--body-text)}
+.nav-btn.active{color:var(--navy);border-bottom-color:var(--gold)}
+
+.main{max-width:980px;margin:0 auto;padding:1.5rem 1.25rem 4rem}
+.mode-panel{display:none}.mode-panel.active{display:block}
+.section{display:none}.section.active{display:block}
+
+.session-header{display:flex;align-items:center;gap:12px;margin-bottom:.4rem}
+.session-num{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.session-header h2{font-size:1.25rem;font-weight:700;letter-spacing:-.01em}
+.session-desc{font-size:.88rem;color:var(--muted);margin-bottom:1.4rem;padding-left:52px}
+
+.info-box{background:var(--navy-light);border-left:4px solid var(--navy);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:1rem 1.25rem;font-size:.88rem;color:var(--body-text);margin-bottom:1.4rem;line-height:1.7}
+.info-box strong{color:var(--navy)}
+.info-box code{background:#fff;border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:.85em}
+
+.workflow-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.25rem;margin-bottom:1rem}
+.workflow-card h3{font-size:.92rem;font-weight:700;margin-bottom:.7rem;color:var(--navy)}
+.workflow-steps{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.wf-step{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:8px;font-size:12px;font-weight:600;background:var(--navy-light);color:var(--navy)}
+.wf-arrow{font-size:15px;color:var(--muted)}
+
+.prompt-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1rem;overflow:hidden;transition:border-color .2s}
+.prompt-card:hover{border-color:#ccc}
+.prompt-card-header{display:flex;align-items:center;gap:10px;padding:1rem 1.25rem}
+.prompt-step{font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;flex-shrink:0;letter-spacing:.03em}
+.step-navy{background:var(--navy-light);color:#0C3A66}
+.step-teal{background:var(--teal-light);color:#0D6B61}
+.step-coral{background:var(--coral-light);color:#A14030}
+.step-gold{background:var(--gold-light);color:var(--gold-deep)}
+.step-purple{background:var(--purple-light);color:#4A2D80}
+.prompt-card-title{font-size:.92rem;font-weight:600;flex:1}
+.tool-badge{font-size:10px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--cream);color:var(--muted);flex-shrink:0;white-space:nowrap}
+.copy-btn{flex-shrink:0;width:34px;height:34px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--card-bg);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;color:var(--muted)}
+.copy-btn:hover{background:var(--navy-light);border-color:var(--navy);color:var(--navy)}
+.copy-btn.copied{background:var(--teal-light);border-color:var(--teal);color:var(--teal)}
+.copy-btn svg{width:16px;height:16px}
+.prompt-body{padding:0 1.25rem 1.25rem}
+.prompt-text{font-size:.84rem;line-height:1.75;color:var(--body-text);background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem 1.15rem;white-space:pre-wrap;word-break:keep-all;font-family:var(--font);cursor:pointer;position:relative;transition:border-color .2s}
+.prompt-text:hover{border-color:#ccc}
+.prompt-text::after{content:'클릭하여 복사';position:absolute;top:8px;right:10px;font-size:11px;color:var(--muted);opacity:0;transition:opacity .2s}
+.prompt-text:hover::after{opacity:.6}
+
+.var-toggle{display:flex;align-items:center;gap:6px;padding:10px 1.25rem;border-top:1px solid var(--border);cursor:pointer;font-size:12.5px;font-weight:500;color:var(--muted);background:var(--card-bg);transition:background .15s;user-select:none}
+.var-toggle:hover{background:var(--cream)}
+.var-toggle svg{width:14px;height:14px;transition:transform .2s}
+.var-toggle.open svg{transform:rotate(90deg)}
+.var-list{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.var-list.open{max-height:2400px}
+.var-item{padding:10px 1.25rem;border-top:1px solid var(--border)}
+.var-item-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.var-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--navy-light);color:var(--navy)}
+.var-label{font-size:12px;font-weight:600;color:var(--body-text)}
+.var-prompt{font-size:.82rem;color:var(--muted);background:var(--card-bg);border:1px solid var(--border);border-radius:6px;padding:8px 12px;cursor:pointer;transition:border-color .2s;white-space:pre-wrap;word-break:keep-all}
+.var-prompt:hover{border-color:var(--navy)}
+
+.section-divider{font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin:2rem 0 1rem;padding-bottom:8px;border-bottom:2px solid var(--gold);display:inline-block}
+
+.tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
+.tool-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:24px}
+@media(max-width:720px){.tool-grid,.tool-grid-2{grid-template-columns:1fr}}
+.tool-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:all .25s;position:relative;box-shadow:var(--shadow)}
+.tool-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.tool-card.active{border-color:var(--navy);box-shadow:0 0 0 2px rgba(14,42,71,.22)}
+.tool-icon{font-size:26px;margin-bottom:8px}
+.tool-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.tool-name{font-size:15px;font-weight:700;margin-bottom:4px}
+.tool-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.tool-pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.pill{font-size:10px;padding:2px 8px;border-radius:999px;font-weight:600}
+.progress-dot{position:absolute;top:14px;right:14px;width:26px;height:26px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;transition:all .2s;background:#fff}
+.progress-dot[data-state="1"]{border-color:#F59E0B;background:#FEF3C7;color:#D97706}
+.progress-dot[data-state="2"]{border-color:#10B981;background:#D1FAE5;color:#059669}
+.progress-dot[data-state="1"]::after{content:'⏳'}
+.progress-dot[data-state="2"]::after{content:'✓';font-weight:700}
+.accordion{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1);margin-bottom:8px}
+.accordion.open{margin-bottom:24px}
+.accordion-inner{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow)}
+.feature-link{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:10px;font-size:13px;font-weight:600;text-decoration:none;color:#fff;background:linear-gradient(135deg,var(--navy),var(--navy-mid));margin-bottom:18px}
+.prompt-block{background:#F9FAFB;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;position:relative}
+.prompt-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.prompt-num{font-size:12px;font-weight:700;color:var(--navy);min-width:18px}
+.prompt-badge{font-size:11px;padding:2px 10px;border-radius:999px;font-weight:600;background:var(--navy-light);color:#0C3A66}
+.prompt-title{font-weight:600;font-size:14px;flex:1}
+.prompt-block .prompt-body{font-size:13px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:13px;color:var(--body-text);white-space:pre-wrap;word-break:keep-all;position:relative;line-height:1.7;cursor:pointer;transition:border-color .2s;padding-top:0}
+.prompt-block .prompt-body:hover{border-color:var(--navy)}
+.section-label{font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin:18px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--gold);display:inline-block}
+.bonus-tag{background:var(--coral);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:4px}
+.steps-num{counter-reset:s;margin:6px 0 14px;padding:0;list-style:none}
+.steps-num li{counter-increment:s;position:relative;padding:6px 0 6px 34px;font-size:13.5px;color:var(--body-text);border-bottom:1px dashed var(--border)}
+.steps-num li::before{content:counter(s);position:absolute;left:0;top:6px;width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.steps-num li:last-child{border-bottom:none}
+.steps-num b{color:var(--navy)}
+
+.dl-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px}
+.dl-card h3{font-size:15px;font-weight:700;margin-bottom:8px}
+.dl-card p{font-size:13px;color:var(--muted);margin-bottom:14px}
+.dl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(max-width:600px){.dl-grid{grid-template-columns:1fr}}
+.dl-item{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--dark-text);transition:all .2s}
+.dl-item:hover{background:var(--navy-light);border-color:var(--navy)}
+.dl-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.dl-icon.data{background:var(--green-light)}
+.dl-icon.doc{background:var(--navy-light)}
+.dl-item h4{font-size:13px;font-weight:600}
+.dl-item span{font-size:11px;color:var(--muted)}
+
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:12px 28px;border-radius:12px;font-size:14px;font-weight:500;opacity:0;transition:all .35s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.font-ctrl{position:fixed;bottom:20px;right:20px;display:flex;gap:6px;z-index:100}
+.font-ctrl button{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--white);font-size:15px;font-weight:700;cursor:pointer;box-shadow:var(--shadow);transition:all .2s;font-family:var(--font)}
+.font-ctrl button:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+@media(max-width:600px){.workflow-steps{flex-direction:column;align-items:flex-start}.wf-arrow{transform:rotate(90deg)}.mode-inner{flex-direction:column;padding:8px}.mode-toggle{margin:0 0 4px}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">순천향대학교 · 교직원 워크숍 AI 실습</div>
+    <h1>교직원을 위한 AI 활용 실습 가이드</h1>
+    <p class="subtitle">생성형AI는 순천향에게 무엇을 이야기하는가? — 행정 현장에서 바로 쓰는 AI</p>
+    <p class="tool-note">실습 도구: 우리 학교 <b>팩트챗(FactChat)</b> · 멀티모델 채팅 · 파일분석 · Univ-in-Data · 스튜디오</p>
+  </div>
+</div>
+
+<div class="mode-bar">
+  <div class="mode-inner">
+    <div class="mode-toggle">
+      <button class="mode-btn active" onclick="switchMode('scenario')">📋 업무별</button>
+      <button class="mode-btn" onclick="switchMode('tools')">🔧 기능별</button>
+    </div>
+    <div class="nav" id="scenario-nav">
+      <button class="nav-btn active" data-tab="s1">① 공문·기안문</button>
+      <button class="nav-btn" data-tab="s2">② 문서 분석</button>
+      <button class="nav-btn" data-tab="s3">③ 민원 응대</button>
+      <button class="nav-btn" data-tab="s4">④ 회의록</button>
+      <button class="nav-btn" data-tab="s5">⑤ 대학 데이터</button>
+      <button class="nav-btn" data-tab="s6">⑥ 맞춤 챗봇</button>
+      <button class="nav-btn" data-tab="tips">프롬프트 원칙</button>
+      <button class="nav-btn" data-tab="download">📥 데이터</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ===================== 시나리오(업무별) 모드 ===================== -->
+<div class="mode-panel active" id="panel-scenario">
+
+<!-- S1: 공문·기안문 -->
+<div class="section active" id="sec-s1">
+  <div class="session-header"><div class="session-num" style="background:var(--navy)">1</div><h2>공문·기안문 초안 작성</h2></div>
+  <p class="session-desc">반복적으로 쓰는 안내 공문·기안문을, 팩트챗 멀티모델 채팅으로 5분 만에 초안까지.</p>
+  <div class="info-box"><strong>사전 준비</strong> — 팩트챗 상단 챗봇 선택 메뉴에서 <code>GPT-5</code> 또는 <code>Claude</code>를 선택하세요. 복잡한 판단이 필요하면 <b>심층 사고</b> 모드를 켜면 좋습니다(Claude 모델 지원).</div>
+  <div class="workflow-card"><h3>워크플로우</h3><div class="workflow-steps">
+    <span class="wf-step">✍️ 상황·목적 입력</span><span class="wf-arrow">→</span>
+    <span class="wf-step">📄 공문 초안 생성</span><span class="wf-arrow">→</span>
+    <span class="wf-step">🔁 두 모델 비교</span><span class="wf-arrow">→</span>
+    <span class="wf-step">✅ 톤·형식 다듬기</span>
+  </div></div>
+
+  <div class="prompt-card">
+    <div class="prompt-card-header"><span class="prompt-step step-navy">STEP 1</span><span class="prompt-card-title">안내 공문 초안 작성</span><span class="tool-badge">멀티모델 채팅</span>
+      <button class="copy-btn" onclick="copyFromCard(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
+    <div class="prompt-body"><div class="prompt-text" onclick="copyText(this)">너는 대학 행정 문서에 능숙한 교직원이야. 아래 상황으로 교내 안내 공문 초안을 작성해줘.
+
+상황: 전 교직원 대상 'AI 리터러시' 특강을 개최한다.
+- 일시: 2026년 7월 3일(금) 14:00~16:00
+- 장소: 본관 3층 대회의실
+- 대상: 전 교직원(희망자)
+- 신청: 6월 30일까지 그룹웨어 설문으로
+
+형식:
+1. 제목(문서 제목답게)
+2. 수신/참조
+3. 본문(개요 → 세부내용 → 협조사항 순)
+4. 붙임 표기
+어조: 공문 표준 문체, 간결하고 명확하게</div></div>
+    <div class="var-toggle" onclick="toggleVar(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Variation 4개</div>
+    <div class="var-list">
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">V1</span><span class="var-label">기안문 양식</span></div><div class="var-prompt" onclick="copyText(this)">위 내용을 '기안문' 양식으로 바꿔줘. 제목/기안자/시행일자/문서번호 자리표시자 포함하고, 의사결정 요청 문장도 넣어줘</div></div>
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">V2</span><span class="var-label">학생 대상 안내문</span></div><div class="var-prompt" onclick="copyText(this)">같은 행사를 학생 대상 안내문으로 다시 써줘. 어조는 친근하고 쉽게, 모바일 공지로 읽기 좋게 3~4문장으로</div></div>
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">V3</span><span class="var-label">두 모델 비교</span></div><div class="var-prompt" onclick="copyText(this)">입력창 위 '+ 비교'를 눌러 Claude와 GPT-5를 동시에 띄우고, 같은 공문을 양쪽에 시켜 더 자연스러운 쪽을 골라 이어가세요</div></div>
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">V4</span><span class="var-label">영문 병기</span></div><div class="var-prompt" onclick="copyText(this)">외국인 교직원·유학생도 볼 수 있도록 핵심 안내(일시·장소·신청)를 영문으로 병기해줘</div></div>
+    </div>
+  </div>
+
+  <div class="prompt-card">
+    <div class="prompt-card-header"><span class="prompt-step step-teal">STEP 2</span><span class="prompt-card-title">표현 다듬기 + 점검</span><span class="tool-badge">심층 사고</span>
+      <button class="copy-btn" onclick="copyFromCard(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
+    <div class="prompt-body"><div class="prompt-text" onclick="copyText(this)">위에서 만든 공문을 다음 기준으로 점검하고 고쳐줘.
+
+1. 모호하거나 오해 소지가 있는 문장
+2. 빠진 필수 정보(담당자·연락처·문의처 등)
+3. 과한 행정 용어를 쉬운 표현으로
+4. 최종본을 '수정 전/후' 비교표로 정리
+
+확신이 낮은 부분은 [확인필요]로 표시해줘</div></div>
+  </div>
+</div>
+
+<!-- S2: 문서 분석 -->
+<div class="section" id="sec-s2">
+  <div class="session-header"><div class="session-num" style="background:var(--teal)">2</div><h2>규정·공문 문서 분석·요약</h2></div>
+  <p class="session-desc">긴 규정·hwp 공문을 통째로 올려, 핵심만 뽑고 바로 질문하기. 팩트챗은 hwp·pdf의 표·이미지 속 글자까지 인식합니다.</p>
+  <div class="info-box"><strong>사전 준비</strong> — 입력창의 <b>파일 첨부</b>로 <code>순천향_복무출장규정_발췌.docx</code>를 올리세요. (실제 업무에서는 hwp·pdf 규정을 그대로 올리면 됩니다. 문서당 최대 50MB)</div>
+  <div class="workflow-card"><h3>워크플로우</h3><div class="workflow-steps">
+    <span class="wf-step">📎 규정 파일 업로드</span><span class="wf-arrow">→</span>
+    <span class="wf-step">📝 핵심 요약</span><span class="wf-arrow">→</span>
+    <span class="wf-step">❓ 출처 인용 Q&A</span><span class="wf-arrow">→</span>
+    <span class="wf-step">📋 표로 정리</span>
+  </div></div>
+
+  <div class="prompt-card">
+    <div class="prompt-card-header"><span class="prompt-step step-navy">STEP 1</span><span class="prompt-card-title">규정 핵심 요약 + 한눈에 표</span><span class="tool-badge">파일 분석</span>
+      <button class="copy-btn" onclick="copyFromCard(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
+    <div class="prompt-body"><div class="prompt-text" onclick="copyText(this)">첨부한 규정 문서를 분석해줘.
+
+1. 이 규정이 다루는 범위를 3줄로 요약
+2. 교직원이 실무에서 자주 묻는 항목(근무시간·연차·출장여비·정산 기한)을 표로 정리
+   | 항목 | 핵심 기준 | 근거 조항 |
+3. 출장 여비 중 '한도'가 있는 항목만 따로 뽑아줘
+4. 답변에는 반드시 문서의 조항 번호를 함께 인용해줘</div></div>
+    <div class="var-toggle" onclick="toggleVar(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Variation 3개</div>
+    <div class="var-list">
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">V1</span><span class="var-label">실무 Q&A</span></div><div class="var-prompt" onclick="copyText(this)">교수님이 KTX 특실을 타고 광역시에서 1박 9만원 숙박을 했어. 규정상 정산 가능한 금액과 필요 증빙을 조항 근거와 함께 알려줘</div></div>
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">V2</span><span class="var-label">민원 답변용 변환</span></div><div class="var-prompt" onclick="copyText(this)">'일반휴학하면 등록금이 어떻게 되나요'라는 학생 질문에, 규정 근거를 들어 안내 메일 문장으로 답해줘</div></div>
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">V3</span><span class="var-label">체크리스트화</span></div><div class="var-prompt" onclick="copyText(this)">출장 정산 담당자가 빠뜨리기 쉬운 항목을 규정 기준 '정산 체크리스트'로 만들어줘 (✓ 표시 가능한 형태)</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S3: 민원 응대 -->
+<div class="section" id="sec-s3">
+  <div class="session-header"><div class="session-num" style="background:var(--coral)">3</div><h2>민원·문의 분류와 응대 초안</h2></div>
+  <p class="session-desc">쌓인 문의를 우선순위로 자동 분류하고, 답변 초안까지 한 번에. 사람은 검토·발송만.</p>
+  <div class="info-box"><strong>사전 준비</strong> — <code>순천향_민원문의_모음.xlsx</code>를 첨부하세요. (실제로는 메일함·접수대장 내용을 붙여넣어도 됩니다)</div>
+  <div class="workflow-card"><h3>워크플로우</h3><div class="workflow-steps">
+    <span class="wf-step">📎 문의 목록 업로드</span><span class="wf-arrow">→</span>
+    <span class="wf-step">🚦 우선순위 분류</span><span class="wf-arrow">→</span>
+    <span class="wf-step">✉️ 답변 초안</span><span class="wf-arrow">→</span>
+    <span class="wf-step">👤 검토·발송</span>
+  </div></div>
+
+  <div class="prompt-card">
+    <div class="prompt-card-header"><span class="prompt-step step-navy">STEP 1</span><span class="prompt-card-title">문의 우선순위 분류 + 담당 배정</span><span class="tool-badge">파일 분석</span>
+      <button class="copy-btn" onclick="copyFromCard(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
+    <div class="prompt-body"><div class="prompt-text" onclick="copyText(this)">첨부한 민원·문의 목록을 교직원 관점에서 정리해줘.
+
+1. 우선순위로 분류
+   🔴 긴급(오늘 처리) / 🟡 중요(이번 주) / 🟢 일반(정보 안내)
+2. 각 건에 대해: 핵심요청 1줄 요약 + 담당부서 + 필요 조치
+3. 같은 유형끼리 묶어서, 표준 답변으로 처리 가능한 'FAQ 후보'를 골라줘
+4. 결과를 표로 정리
+
+표 끝에 '오늘 꼭 처리해야 할 일 Top 3'도 적어줘</div></div>
+    <div class="var-toggle" onclick="toggleVar(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Variation 3개</div>
+    <div class="var-list">
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">V1</span><span class="var-label">답변 초안 일괄</span></div><div class="var-prompt" onclick="copyText(this)">'일반(정보 안내)'으로 분류된 문의들에 대해, 각각 친절한 답변 메일 초안을 만들어줘. 학교 행정 톤, 5문장 이내</div></div>
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">V2</span><span class="var-label">긴급 건 처리</span></div><div class="var-prompt" onclick="copyText(this)">'수강신청 오류' 같은 긴급 건에 대해, 학생에게 보낼 1차 응대 메일과 내부 담당자에게 전달할 처리요청 메모를 각각 작성해줘</div></div>
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">V3</span><span class="var-label">FAQ 페이지화</span></div><div class="var-prompt" onclick="copyText(this)">반복되는 문의를 묶어 홈페이지 게시용 'FAQ 10선'으로 만들어줘. 질문은 학생 말투, 답변은 공식 안내 톤</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S4: 회의록 -->
+<div class="section" id="sec-s4">
+  <div class="session-header"><div class="session-num" style="background:var(--gold-deep)">4</div><h2>회의록 정리와 후속 처리</h2></div>
+  <p class="session-desc">녹취·메모를 구조화된 회의록으로, 그리고 액션아이템·후속 메일까지 자동으로.</p>
+  <div class="info-box"><strong>사전 준비</strong> — <code>순천향_교무회의_회의록.docx</code>를 첨부하세요. 팩트챗 <b>회의록</b> 에이전트를 쓰면 녹음에서 바로 정리도 가능합니다.</div>
+  <div class="prompt-card">
+    <div class="prompt-card-header"><span class="prompt-step step-navy">STEP 1</span><span class="prompt-card-title">녹취 → 구조화 회의록</span><span class="tool-badge">파일 분석 / 회의록</span>
+      <button class="copy-btn" onclick="copyFromCard(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
+    <div class="prompt-body"><div class="prompt-text" onclick="copyText(this)">첨부한 회의 내용을 구조화된 회의록으로 정리해줘.
+
+형식:
+1. 회의 개요(일시·장소·참석·안건)
+2. 안건별 핵심 논의 (2~3줄 요약)
+3. 결정 사항 (무엇이 정해졌는지)
+4. 액션 아이템 표
+   | 담당(부서) | 할 일 | 기한 |
+5. 다음 회의 일정/준비사항
+
+빠진 액션 아이템이 없도록 꼼꼼하게, 추정한 부분은 [추정] 표시</div></div>
+    <div class="var-toggle" onclick="toggleVar(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Variation 3개</div>
+    <div class="var-list">
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">V1</span><span class="var-label">후속 메일</span></div><div class="var-prompt" onclick="copyText(this)">이 회의 결과로 참석 부서장들에게 보낼 후속 안내 메일을 작성해줘. 각자 액션 아이템과 기한을 부서별로 정리, 15줄 이내</div></div>
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">V2</span><span class="var-label">경영진 1page</span></div><div class="var-prompt" onclick="copyText(this)">총장 보고용 한 페이지 요약으로 만들어줘. 핵심 결정 3가지 + 리스크 + 다음 단계 형식</div></div>
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">V3</span><span class="var-label">미결 추적</span></div><div class="var-prompt" onclick="copyText(this)">이번 회의에서 결론이 나지 않고 '추가 검토'로 넘어간 항목만 따로 뽑아, 다음 회의 안건 초안으로 만들어줘</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S5: 대학 데이터 -->
+<div class="section" id="sec-s5">
+  <div class="session-header"><div class="session-num" style="background:var(--navy-2)">5</div><h2>대학 데이터·경쟁대학 분석</h2></div>
+  <p class="session-desc">우리 학교 데이터는 파일로 분석, 경쟁 대학·전국 추세는 Univ-in-Data 에이전트로 — 통계 사이트를 뒤질 필요 없이 채팅으로.</p>
+  <div class="info-box"><strong>두 가지 길</strong> — ① 내부 데이터는 <code>순천향_학과현황_통계.xlsx</code>를 업로드해 분석. ② 전국·타 대학 비교는 좌측 메뉴 <b>Univ-in-Data</b>(대학 공시데이터 분석 에이전트)에 자연어로 질문. (Univ-in-Data는 질문당 크레딧이 차감되니 질문 전 한 번 더 확인)</div>
+
+  <div class="prompt-card">
+    <div class="prompt-card-header"><span class="prompt-step step-navy">STEP 1</span><span class="prompt-card-title">내부 학과 현황 분석</span><span class="tool-badge">파일 분석</span>
+      <button class="copy-btn" onclick="copyFromCard(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
+    <div class="prompt-body"><div class="prompt-text" onclick="copyText(this)">첨부한 학과 현황·연도별 추이 데이터를 분석해줘.
+
+1. 신입생 충원율이 낮거나 중도탈락률이 높은 '관심 학과'를 찾아줘
+2. 학생당 전임교원 수가 많은/적은 학과를 비교
+3. 연도별 추이에서 눈에 띄는 변화(외국인 유학생 등)를 짚어줘
+4. 학과 경쟁력을 '안정/주의/관심필요'로 분류
+
+추정·해석에는 [추정] 표시, 결과는 표 + 3줄 요약</div></div>
+    <div class="var-toggle" onclick="toggleVar(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>Variation 2개</div>
+    <div class="var-list">
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">V1</span><span class="var-label">시각화 요청</span></div><div class="var-prompt" onclick="copyText(this)">학과별 취업률과 충원율을 한눈에 비교할 수 있는 차트로 만들어줘. 의료융합 계열과 그 외를 구분해서</div></div>
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">V2</span><span class="var-label">보고용 요약</span></div><div class="var-prompt" onclick="copyText(this)">이 분석을 처장 보고용 한 페이지로 정리해줘. 핵심 지표 3개 + 관심 학과 + 제언 형식</div></div>
+    </div>
+  </div>
+
+  <div class="prompt-card">
+    <div class="prompt-card-header"><span class="prompt-step step-purple">Univ-in-Data</span><span class="prompt-card-title">전국·경쟁대학 공시데이터 질문</span><span class="tool-badge">대학 분석 에이전트</span>
+      <button class="copy-btn" onclick="copyFromCard(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
+    <div class="prompt-body"><div class="prompt-text" onclick="copyText(this)">최근 3년간 충남권 사립대학의 신입생 충원율 추이를 비교해줘.
+
+이어서 이런 질문도 해보세요:
+· "올해 신설된 인공지능·의료융합 관련 학과가 있는 대학을 정리해줘"
+· "2024년 1인당 외부연구비 상위 10개 대학을 알려줘"
+· "비수도권 대학 중 외국인 유학생 수가 많이 늘어난 곳은?"
+
+→ 답변의 근거가 된 공시문서 출처를 함께 확인하세요</div></div>
+  </div>
+</div>
+
+<!-- S6: 맞춤 챗봇 -->
+<div class="section" id="sec-s6">
+  <div class="session-header"><div class="session-num" style="background:var(--purple)">6</div><h2>우리 부서 맞춤 챗봇 만들기</h2></div>
+  <p class="session-desc">규정·매뉴얼을 올려두면, 신규 직원도 학생도 24시간 물어볼 수 있는 '규정 안내봇'을 코딩 없이 제작. 팩트챗 <b>스튜디오</b>.</p>
+  <div class="info-box"><strong>핵심</strong> — 스튜디오는 <b>프로필 → 동작 → 지식</b> 3단계로 챗봇을 만듭니다. '지식' 탭에 규정 문서를 올리면, 그 문서 안에서만 출처를 인용해 답하므로 환각이 크게 줄어듭니다.</div>
+
+  <div class="prompt-card">
+    <div class="prompt-card-header"><span class="prompt-step step-purple">만들기</span><span class="prompt-card-title">'복무·출장 규정 안내봇' 제작 순서</span><span class="tool-badge">스튜디오</span></div>
+    <div class="prompt-body" style="padding-top:.6rem">
+      <ol class="steps-num">
+        <li><b>스튜디오 → + 새 챗봇</b> 클릭</li>
+        <li><b>프로필 탭</b>: 이름 "복무·출장 규정 안내봇", 추천 질문에 "연차는 며칠인가요", "출장 숙박비 한도는?", "휴학하면 등록금은?" 등록</li>
+        <li><b>동작 탭</b>: 모델 선택 후, 아래 '시스템 프롬프트'를 붙여넣기. 정확도가 중요하니 <b>심층 사고</b> 켜기</li>
+        <li><b>지식 탭</b>: <code>순천향_복무출장규정_발췌.docx</code> 업로드 (실제로는 전체 규정집 hwp/pdf)</li>
+        <li>우측 <b>테스트 채팅</b>에서 바로 질문해 확인 → <b>저장</b></li>
+        <li><b>공유</b>: 스토어 공개로 부서원 전체에게 배포(관리자 승인)</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="prompt-card">
+    <div class="prompt-card-header"><span class="prompt-step step-navy">시스템 프롬프트</span><span class="prompt-card-title">동작 탭에 붙여넣을 지시문</span>
+      <button class="copy-btn" onclick="copyFromCard(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
+    <div class="prompt-body"><div class="prompt-text" onclick="copyText(this)">너는 순천향대학교 교직원과 학생을 돕는 '규정 안내 도우미'야.
+
+규칙:
+- 반드시 첨부된 규정 문서에 근거해서만 답해. 문서에 없는 내용은 "해당 규정 문서에서 확인되지 않습니다. 담당 부서에 문의하세요."라고 답해.
+- 답변에는 근거가 된 조항 번호를 함께 표시해.
+- 금액·기한·한도 같은 숫자는 절대 임의로 바꾸지 말고 문서 그대로 인용해.
+- 항상 존댓말로, 핵심을 먼저 말하고 부연은 짧게.
+- 개인의 구체적 사정은 "최종 확인은 담당 부서"임을 안내해.</div></div>
+    <div class="var-toggle" onclick="toggleVar(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>다른 챗봇 아이디어 3개</div>
+    <div class="var-list">
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">A1</span><span class="var-label">신규 직원 온보딩봇</span></div><div class="var-prompt" onclick="copyText(this)">지식 자료로 업무 매뉴얼·조직도·자주 쓰는 양식을 올리고, "처음 출근한 직원이 묻는 것들"에 답하는 온보딩 도우미를 만든다</div></div>
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">A2</span><span class="var-label">학사 FAQ봇</span></div><div class="var-prompt" onclick="copyText(this)">학칙·학사일정·수강신청 안내를 올려 학생 대상 24시간 FAQ봇으로. 외부 공유 URL로 홈페이지에 위젯 임베드 가능</div></div>
+      <div class="var-item"><div class="var-item-header"><span class="var-badge">A3</span><span class="var-label">연구비 집행 도우미</span></div><div class="var-prompt" onclick="copyText(this)">연구비 집행 지침·증빙 서식을 올려, 교수·연구원이 "이 비용 처리되나요"를 바로 물어볼 수 있는 챗봇</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TIPS -->
+<div class="section" id="sec-tips">
+  <div class="session-header"><div class="session-num" style="background:var(--navy)">💡</div><h2>교직원을 위한 프롬프트 5원칙</h2></div>
+  <div class="info-box"><strong>핵심</strong> — 프롬프트는 코딩이 아니라 <em>'일하는 언어'</em>입니다. 아래 5가지만 챙겨도 같은 도구로 결과가 크게 달라집니다.</div>
+  <div class="prompt-card"><div class="prompt-card-header"><span class="prompt-step step-navy">01</span><span class="prompt-card-title">역할을 부여하라</span></div><div class="prompt-body"><div class="prompt-text" onclick="copyText(this)">너는 대학 학사·행정 업무에 능숙한 교직원이야. 순천향대학교의 행정 맥락을 고려해서 답해줘.</div></div></div>
+  <div class="prompt-card"><div class="prompt-card-header"><span class="prompt-step step-teal">02</span><span class="prompt-card-title">맥락을 제공하라</span></div><div class="prompt-body"><div class="prompt-text" onclick="copyText(this)">이건 신입생 학부모에게 보낼 안내야. 행정 용어를 모르는 분도 이해할 수 있게, 정중하고 쉬운 표현으로 써줘.</div></div></div>
+  <div class="prompt-card"><div class="prompt-card-header"><span class="prompt-step step-coral">03</span><span class="prompt-card-title">출력 형식을 지정하라</span></div><div class="prompt-body"><div class="prompt-text" onclick="copyText(this)">결과는 다음 형식으로:
+- 표로(항목 / 기준 / 근거 조항)
+- 요약은 3줄 이내
+- 마지막에 '오늘 할 일 Top 3'</div></div></div>
+  <div class="prompt-card"><div class="prompt-card-header"><span class="prompt-step step-gold">04</span><span class="prompt-card-title">제약 조건을 명시하라</span></div><div class="prompt-body"><div class="prompt-text" onclick="copyText(this)">주의:
+- 추정에는 [추정] 표시
+- 규정·숫자는 문서 그대로 인용하고 출처(조항) 표기
+- 문서에 없으면 '확인 불가'라고 말해줘</div></div></div>
+  <div class="prompt-card"><div class="prompt-card-header"><span class="prompt-step step-purple">05</span><span class="prompt-card-title">스스로 검증시켜라</span></div><div class="prompt-body"><div class="prompt-text" onclick="copyText(this)">이 답변에서 틀릴 수 있는 부분을 스스로 짚어줘. 특히 근거가 약한 결론, 다르게 해석될 수 있는 숫자를 알려줘.</div></div></div>
+
+  <div class="section-divider">반드시 지킬 것 3가지</div>
+  <div class="info-box" style="border-left-color:var(--coral)">
+    <strong style="color:var(--coral)">① 환각(Hallucination)</strong> — AI는 자신 있게 틀릴 수 있습니다. 규정·금액·날짜는 반드시 원문과 대조하세요. (그래서 규정봇엔 '지식 자료' 업로드가 중요)<br><br>
+    <strong style="color:var(--gold-deep)">② 개인정보·보안</strong> — 학생 주민번호·성적·연락처 등 민감정보는 학교가 계약한 팩트챗 보안 환경 안에서만. 개인 계정 외부 AI에 붙여넣기 금지.<br><br>
+    <strong style="color:var(--navy)">③ AI의 답 ≠ 최종 결정</strong> — AI는 초안을 만들고, 결재·발송·판단은 항상 사람이 합니다.
+  </div>
+</div>
+
+<!-- DOWNLOAD (scenario) -->
+<div class="section" id="sec-download">
+  <div class="session-header"><div class="session-num" style="background:var(--teal)">📥</div><h2>실습 데이터 다운로드</h2></div>
+  <div class="dl-card">
+    <h3>교직원 실습용 더미 데이터</h3>
+    <p>모두 가상의 실습용 데이터입니다. 팩트챗에 업로드해 사용하세요. (실제 업무에서는 hwp·pdf 원본을 그대로 올리면 됩니다)</p>
+    <div class="dl-grid">
+      <a class="dl-item" href="순천향_민원문의_모음.xlsx" download><div class="dl-icon data">📊</div><div><h4>민원문의_모음.xlsx</h4><span>학생·학부모·교수 문의 15건 (분류·응대용)</span></div></a>
+      <a class="dl-item" href="순천향_학과현황_통계.xlsx" download><div class="dl-icon data">📊</div><div><h4>학과현황_통계.xlsx</h4><span>10개 학과 현황 + 연도별 추이 (2시트)</span></div></a>
+      <a class="dl-item" href="순천향_교직원_AI활용설문.xlsx" download><div class="dl-icon data">📊</div><div><h4>교직원_AI활용설문.xlsx</h4><span>25명 설문 + 자동집계 요약 (2시트)</span></div></a>
+      <a class="dl-item" href="순천향_교무회의_회의록.docx" download><div class="dl-icon doc">📄</div><div><h4>교무회의_회의록.docx</h4><span>교무위원회 녹취 (회의록 정리용)</span></div></a>
+      <a class="dl-item" href="순천향_복무출장규정_발췌.docx" download><div class="dl-icon doc">📄</div><div><h4>복무출장규정_발췌.docx</h4><span>복무·출장·연구비 규정 (분석·챗봇용)</span></div></a>
+    </div>
+  </div>
+</div>
+
+</div><!-- panel-scenario -->
+
+<!-- ===================== 기능별 모드 ===================== -->
+<div class="mode-panel" id="panel-tools">
+  <div class="tool-grid">
+    <div class="tool-card" onclick="toggleAccordion('chat')" id="card-chat">
+      <div class="progress-dot" data-state="0" onclick="event.stopPropagation();cycleProgress(this)"></div>
+      <div class="tool-icon">💬</div><div class="tool-tag" style="color:var(--navy)">CORE</div>
+      <div class="tool-name">멀티모델 채팅</div><div class="tool-desc">GPT-5·Claude·Gemini 한 창에서 비교·전환</div>
+      <div class="tool-pills"><span class="pill" style="background:var(--navy-light);color:#0C3A66">3 프롬프트</span></div>
+    </div>
+    <div class="tool-card" onclick="toggleAccordion('file')" id="card-file">
+      <div class="progress-dot" data-state="0" onclick="event.stopPropagation();cycleProgress(this)"></div>
+      <div class="tool-icon">📎</div><div class="tool-tag" style="color:var(--teal)">CORE</div>
+      <div class="tool-name">파일 분석</div><div class="tool-desc">hwp·pdf·xlsx 업로드, OCR·표 인식, 출처 인용</div>
+      <div class="tool-pills"><span class="pill" style="background:var(--teal-light);color:#0D6B61">3 프롬프트</span></div>
+    </div>
+    <div class="tool-card" onclick="toggleAccordion('search')" id="card-search">
+      <div class="progress-dot" data-state="0" onclick="event.stopPropagation();cycleProgress(this)"></div>
+      <div class="tool-icon">🔎</div><div class="tool-tag" style="color:var(--coral)">CORE</div>
+      <div class="tool-name">웹검색 · 심층사고</div><div class="tool-desc">최신 정보 검색 + 깊은 추론(Claude)</div>
+      <div class="tool-pills"><span class="pill" style="background:var(--coral-light);color:#A14030">2 프롬프트</span></div>
+    </div>
+  </div>
+  <div class="tool-grid">
+    <div class="tool-card" onclick="toggleAccordion('univ')" id="card-univ">
+      <div class="progress-dot" data-state="0" onclick="event.stopPropagation();cycleProgress(this)"></div>
+      <div class="tool-icon">🎓</div><div class="tool-tag" style="color:var(--purple)">에이전트</div>
+      <div class="tool-name">Univ-in-Data</div><div class="tool-desc">대학 공시데이터 검색·분석 에이전트</div>
+      <div class="tool-pills"><span class="pill" style="background:var(--purple-light);color:#4A2D80">3 질문</span></div>
+    </div>
+    <div class="tool-card" onclick="toggleAccordion('studio')" id="card-studio">
+      <div class="progress-dot" data-state="0" onclick="event.stopPropagation();cycleProgress(this)"></div>
+      <div class="tool-icon">🤖</div><div class="tool-tag" style="color:var(--gold-deep)">제작</div>
+      <div class="tool-name">스튜디오</div><div class="tool-desc">규정·매뉴얼 기반 맞춤 챗봇 만들기</div>
+      <div class="tool-pills"><span class="pill" style="background:var(--gold-light);color:var(--gold-deep)">3 아이디어</span></div>
+    </div>
+    <div class="tool-card" onclick="toggleAccordion('etc')" id="card-etc">
+      <div class="progress-dot" data-state="0" onclick="event.stopPropagation();cycleProgress(this)"></div>
+      <div class="tool-icon">✨</div><div class="tool-tag" style="color:var(--amber)">에이전트</div>
+      <div class="tool-name">이미지·회의록·문서</div><div class="tool-desc">이미지 생성 · 회의록 · 프레젠테이션 · Deep Research</div>
+      <div class="tool-pills"><span class="pill" style="background:var(--amber-light);color:#8A6010">4 에이전트</span></div>
+    </div>
+  </div>
+  <div class="tool-grid-2">
+    <div class="tool-card" onclick="toggleAccordion('dl2')" id="card-dl2">
+      <div class="progress-dot" data-state="0" onclick="event.stopPropagation();cycleProgress(this)"></div>
+      <div class="tool-icon">📥</div><div class="tool-tag" style="color:var(--muted)">DATA</div>
+      <div class="tool-name">실습 데이터 다운로드</div><div class="tool-desc">민원·통계·설문·회의록·규정 5종</div>
+    </div>
+  </div>
+
+  <div class="accordion" id="acc-chat"><div class="accordion-inner">
+    <div class="info-box"><strong>멀티모델 채팅</strong> — 상단 챗봇 선택 메뉴에서 모델을 바꾸고, 입력창 위 <b>+ 비교</b>로 두 모델을 나란히 받아 더 나은 답을 채택할 수 있습니다.</div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">1</span><span class="prompt-badge">채팅</span><span class="prompt-title">공문 초안 + 두 모델 비교</span></div><div class="prompt-body" onclick="copyText(this)">전 교직원 대상 'AI 리터러시 특강' 안내 공문을 작성해줘. (일시 7/3 14:00, 본관 대회의실, 6/30까지 신청) → 그다음 '+비교'로 다른 모델에도 같은 요청을 해 더 자연스러운 쪽을 골라줘</div></div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">2</span><span class="prompt-badge">채팅</span><span class="prompt-title">긴 메일 3줄 요약</span></div><div class="prompt-body" onclick="copyText(this)">아래 긴 메일을 핵심 3줄로 요약하고, 내가 회신해야 할 사항만 불릿으로 뽑아줘. [메일 본문 붙여넣기]</div></div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">3</span><span class="prompt-badge">채팅</span><span class="prompt-title">표 → 글, 글 → 표 변환</span></div><div class="prompt-body" onclick="copyText(this)">아래 표를 보고서에 넣을 설명 문단으로 바꿔줘. 반대로 줄글로 된 일정은 표로 정리해줘. [내용 붙여넣기]</div></div>
+  </div></div>
+
+  <div class="accordion" id="acc-file"><div class="accordion-inner">
+    <div class="info-box"><strong>파일 분석</strong> — <code>.hwp .hwpx .pdf .docx .pptx .xlsx</code> 등 폭넓게 지원. 문서 속 표·이미지 글자도 OCR로 인식하고, 답변에 <b>출처 인용</b>을 붙여줍니다. (문서당 50MB)</div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">1</span><span class="prompt-badge">파일</span><span class="prompt-title">규정 요약 + 조항 인용</span></div><div class="prompt-body" onclick="copyText(this)">첨부한 규정에서 근무시간·연차·출장여비 핵심 기준을 표로 정리하고, 각 항목의 조항 번호를 함께 인용해줘 (순천향_복무출장규정_발췌.docx)</div></div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">2</span><span class="prompt-badge">파일</span><span class="prompt-title">데이터 표 분석</span></div><div class="prompt-body" onclick="copyText(this)">첨부 엑셀에서 충원율이 낮거나 중도탈락률이 높은 관심 학과를 찾아 표로 정리하고, 추정에는 [추정] 표시해줘 (순천향_학과현황_통계.xlsx)</div></div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">3</span><span class="prompt-badge">파일</span><span class="prompt-title">문의 목록 분류</span></div><div class="prompt-body" onclick="copyText(this)">첨부한 문의 목록을 긴급/중요/일반으로 분류하고 담당부서·필요조치를 표로 정리해줘 (순천향_민원문의_모음.xlsx)</div></div>
+  </div></div>
+
+  <div class="accordion" id="acc-search"><div class="accordion-inner">
+    <div class="info-box"><strong>웹검색</strong>은 최신 정책·뉴스에, <strong>심층사고</strong>는 기획·전략처럼 깊은 추론이 필요한 일에 켜세요(심층사고는 Claude 모델 지원).</div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">1</span><span class="prompt-badge">웹검색</span><span class="prompt-title">최신 정책 확인</span></div><div class="prompt-body" onclick="copyText(this)">2026년 대학 행정 분야 AI 도입 관련 교육부 정책이나 타 대학 사례 최신 동향을 출처와 함께 정리해줘</div></div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">2</span><span class="prompt-badge">심층사고</span><span class="prompt-title">행사 기획</span></div><div class="prompt-body" onclick="copyText(this)">교직원 100명 대상 'AI 업무활용 워크숍'을 기획해줘. 목표·세션 구성·시간표·준비물·평가 방법까지, 단계적으로 깊이 있게</div></div>
+  </div></div>
+
+  <div class="accordion" id="acc-univ"><div class="accordion-inner">
+    <div class="feature-link">🎓 Univ-in-Data</div>
+    <div class="info-box"><strong>Univ-in-Data</strong> — 학과·전형·등록금·연구비 등 한국 대학 공시데이터를 채팅으로 분석하는 에이전트. 답변에 원문 출처가 함께 제공됩니다. <b>질문당 크레딧이 차감</b>되니 전송 전 확인하세요.</div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">1</span><span class="prompt-badge">Univ</span><span class="prompt-title">충원율 추세 비교</span></div><div class="prompt-body" onclick="copyText(this)">최근 3년간 충남권 사립대학의 신입생 충원율 추이를 비교해줘</div></div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">2</span><span class="prompt-badge">Univ</span><span class="prompt-title">신설 학과 모니터링</span></div><div class="prompt-body" onclick="copyText(this)">올해 신설된 인공지능·의료융합 관련 학과가 있는 대학을 정리해줘</div></div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">3</span><span class="prompt-badge">Univ</span><span class="prompt-title">연구비 비교</span></div><div class="prompt-body" onclick="copyText(this)">2024년 1인당 외부연구비 상위 10개 대학을 알려줘</div></div>
+  </div></div>
+
+  <div class="accordion" id="acc-studio"><div class="accordion-inner">
+    <div class="info-box"><strong>스튜디오</strong> — 프로필·동작·지식 3탭으로 맞춤 챗봇 제작. '지식' 탭에 규정·매뉴얼을 올리면 그 문서 안에서만 답해 환각을 줄입니다. 완성 후 스토어 공개 또는 외부 URL/위젯으로 공유.</div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">1</span><span class="prompt-badge">스튜디오</span><span class="prompt-title">규정 안내봇</span></div><div class="prompt-body" onclick="copyText(this)">[지식] 규정집 업로드 → [동작] 시스템 프롬프트로 "문서에 근거해서만, 조항 인용, 없으면 담당부서 안내" 설정 → 테스트 후 저장·공유</div></div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">2</span><span class="prompt-badge">스튜디오</span><span class="prompt-title">신규직원 온보딩봇</span></div><div class="prompt-body" onclick="copyText(this)">업무 매뉴얼·조직도·자주 쓰는 양식을 지식 자료로 올려, 신규 입사자가 묻는 것에 답하는 온보딩 도우미 제작</div></div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">3</span><span class="prompt-badge">스튜디오</span><span class="prompt-title">학사 FAQ봇 (외부 공유)</span><span class="bonus-tag">BONUS</span></div><div class="prompt-body" onclick="copyText(this)">학칙·학사일정을 올려 학생용 FAQ봇 제작 → 외부 공유 URL/위젯 임베드로 홈페이지에 붙이기</div></div>
+  </div></div>
+
+  <div class="accordion" id="acc-etc"><div class="accordion-inner">
+    <div class="info-box"><strong>그 외 에이전트</strong> — 좌측 메뉴에서 바로 쓸 수 있는 작업형 기능들입니다.</div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">1</span><span class="prompt-badge">이미지 생성</span><span class="prompt-title">행사 안내 이미지</span></div><div class="prompt-body" onclick="copyText(this)">'AI 리터러시 특강' 사내 게시용 안내 이미지를 만들어줘. 깔끔한 대학 공지 톤, 네이비 계열, 제목·일시·장소가 잘 보이게</div></div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">2</span><span class="prompt-badge">회의록</span><span class="prompt-title">녹음 → 회의록</span></div><div class="prompt-body" onclick="copyText(this)">회의 녹음을 올리면 참석자·논의·결정·액션아이템으로 자동 정리. 회의 직후 후속 메일까지 이어서 작성</div></div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">3</span><span class="prompt-badge">프레젠테이션</span><span class="prompt-title">보고 자료 초안</span></div><div class="prompt-body" onclick="copyText(this)">학과 현황 분석 결과를 처장 보고용 슬라이드 초안으로 만들어줘. 표지 + 핵심지표 + 관심학과 + 제언 구성</div></div>
+    <div class="prompt-block"><div class="prompt-header"><span class="prompt-num">4</span><span class="prompt-badge">Deep Research</span><span class="prompt-title">심층 리서치</span></div><div class="prompt-body" onclick="copyText(this)">'국내 대학의 행정 AI 도입 사례와 효과'를 주제로, 여러 출처를 종합한 심층 리서치 보고서를 만들어줘</div></div>
+  </div></div>
+
+  <div class="accordion" id="acc-dl2"><div class="accordion-inner">
+    <div class="dl-card"><h3>실습 데이터 다운로드</h3><p>가상의 실습용 데이터입니다. 팩트챗에 업로드해 사용하세요.</p>
+      <div class="dl-grid">
+        <a class="dl-item" href="순천향_민원문의_모음.xlsx" download><div class="dl-icon data">📊</div><div><h4>민원문의_모음.xlsx</h4><span>문의 15건</span></div></a>
+        <a class="dl-item" href="순천향_학과현황_통계.xlsx" download><div class="dl-icon data">📊</div><div><h4>학과현황_통계.xlsx</h4><span>2시트</span></div></a>
+        <a class="dl-item" href="순천향_교직원_AI활용설문.xlsx" download><div class="dl-icon data">📊</div><div><h4>AI활용설문.xlsx</h4><span>25명+집계</span></div></a>
+        <a class="dl-item" href="순천향_교무회의_회의록.docx" download><div class="dl-icon doc">📄</div><div><h4>교무회의_회의록.docx</h4><span>녹취</span></div></a>
+        <a class="dl-item" href="순천향_복무출장규정_발췌.docx" download><div class="dl-icon doc">📄</div><div><h4>복무출장규정_발췌.docx</h4><span>규정</span></div></a>
+      </div>
+    </div>
+  </div></div>
+
+</div><!-- panel-tools -->
+
+</div><!-- main -->
+
+<div class="toast" id="toast">복사되었습니다 ✓</div>
+<div class="font-ctrl"><button onclick="changeFontSize(-1)">A-</button><button onclick="changeFontSize(1)">A+</button></div>
+
+<script>
+function switchMode(mode){
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+mode).classList.add('active');
+  document.getElementById('scenario-nav').style.display = mode==='scenario'?'flex':'none';
+  document.querySelectorAll('.accordion').forEach(a=>{a.classList.remove('open');a.style.maxHeight='0';});
+  document.querySelectorAll('.tool-card').forEach(c=>c.classList.remove('active'));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.nav-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('#panel-scenario .section').forEach(s=>s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('sec-'+btn.dataset.tab).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+function toggleAccordion(id){
+  const acc=document.getElementById('acc-'+id),card=document.getElementById('card-'+id);
+  const isOpen=acc.classList.contains('open');
+  document.querySelectorAll('.accordion').forEach(a=>{a.classList.remove('open');a.style.maxHeight='0';});
+  document.querySelectorAll('.tool-card').forEach(c=>c.classList.remove('active'));
+  if(!isOpen){acc.classList.add('open');acc.style.maxHeight=acc.scrollHeight+'px';if(card)card.classList.add('active');
+    setTimeout(()=>acc.scrollIntoView({behavior:'smooth',block:'nearest'}),100);}
+}
+function cycleProgress(dot){dot.dataset.state=(parseInt(dot.dataset.state)+1)%3;}
+function toggleVar(el){el.classList.toggle('open');el.nextElementSibling.classList.toggle('open');}
+function copyText(el){const t=el.textContent.replace('클릭하여 복사','').trim();navigator.clipboard.writeText(t).then(showToast);}
+function copyFromCard(btn){const card=btn.closest('.prompt-card');const el=card.querySelector('.prompt-text');
+  if(el){navigator.clipboard.writeText(el.textContent.trim()).then(()=>{btn.classList.add('copied');showToast();setTimeout(()=>btn.classList.remove('copied'),1500);});}}
+let toastTimer;function showToast(){const t=document.getElementById('toast');t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1800);}
+let cur=15;function changeFontSize(d){cur=Math.max(12,Math.min(20,cur+d));document.body.style.fontSize=cur+'px';}
+</script>
+</body>
+</html>

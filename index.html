@@ -23,7 +23,7 @@
   --font:'Pretendard Variable',-apple-system,system-ui,sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font);background:var(--warm-white);color:var(--dark-text);line-height:1.65;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font);background:var(--warm-white);color:var(--dark-text);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
 .hero{background:linear-gradient(135deg,var(--navy) 0%,#0B2138 55%,#143A60 100%);padding:46px 24px 38px;text-align:center;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;top:-60px;right:-50px;width:240px;height:240px;background:var(--gold);opacity:.14;border-radius:50%}
@@ -40,7 +40,7 @@ body{font-family:var(--font);background:var(--warm-white);color:var(--dark-text)
 .mode-toggle{display:flex;background:var(--cream);border-radius:10px;padding:3px;margin:8px 16px}
 .mode-btn{padding:8px 18px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s;background:transparent;color:var(--muted)}
 .mode-btn.active{background:var(--navy);color:#fff;box-shadow:0 2px 6px rgba(14,42,71,.25)}
-.nav{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;flex:1 1 auto;min-width:0;-webkit-overflow-scrolling:touch}
 .nav::-webkit-scrollbar{display:none}
 .nav-btn{flex-shrink:0;padding:14px 16px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;font-family:var(--font);white-space:nowrap}
 .nav-btn:hover{color:var(--body-text)}
@@ -156,6 +156,19 @@ body{font-family:var(--font);background:var(--warm-white);color:var(--dark-text)
 .font-ctrl button{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--white);font-size:15px;font-weight:700;cursor:pointer;box-shadow:var(--shadow);transition:all .2s;font-family:var(--font)}
 .font-ctrl button:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
 @media(max-width:600px){.workflow-steps{flex-direction:column;align-items:flex-start}.wf-arrow{transform:rotate(90deg)}.mode-inner{flex-direction:column;padding:8px}.mode-toggle{margin:0 0 4px}}
+/* ===== 모바일 메뉴/오버플로 보정 ===== */
+.mode-inner{width:100%;box-sizing:border-box}
+.prompt-text,.var-prompt{overflow-wrap:anywhere}
+.info-box code,.prompt-text,.var-prompt{overflow-wrap:anywhere;word-break:break-word}
+@media(max-width:600px){
+  .mode-inner{flex-direction:column;align-items:stretch;padding:8px;gap:4px}
+  .mode-toggle{margin:0;align-self:center}
+  .nav{width:100%;flex:1 1 auto;min-width:0;border-top:1px solid var(--border);padding-top:2px}
+  .nav-btn{padding:12px 12px;font-size:12.5px}
+  .main{overflow-x:hidden}
+  .workflow-steps{flex-direction:column;align-items:flex-start}
+  .wf-arrow{transform:rotate(90deg)}
+}
 </style>
 </head>
 <body>
